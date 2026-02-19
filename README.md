@@ -1,52 +1,110 @@
-# 👗 Generative AI Powered Fashion Recommendation System
+# AI Fashion Recommendation System
 
-## 📌 Overview
-This project is an AI-based fashion recommendation system that suggests personalized outfits to users based on their preferences, body type, occasion, and trends.  
-The system uses Generative AI and Computer Vision to analyze clothing items and recommend suitable outfit combinations.
+A complete Flask web application that uses AI to recommend similar fashion items based on uploaded clothing images.
 
----
+## Features
 
-## 🎯 Problem Statement
-Online shoppers often struggle to decide what outfit suits them best, leading to low engagement and high return rates.  
-Our solution provides intelligent outfit recommendations and improves shopping experience using AI.
+- **Image Upload**: Drag & drop or click to upload clothing images
+- **AI-Powered Recommendations**: Uses MobileNetV2 for feature extraction and cosine similarity for matching
+- **Modern UI**: Beautiful, responsive interface with smooth animations
+- **Real-time Processing**: Fast similarity matching with processing time display
+- **Auto-Sample Generation**: Creates sample fashion items if dataset is empty
 
----
+## Project Structure
 
-## 🚀 Features
-- Personalized outfit recommendations
-- Image-based clothing detection
-- AI generated outfit combinations
-- Trend and occasion based suggestions
-- User preference learning
+```
+ai-fashion-recommendation/
+├── app.py                 # Main Flask application
+├── recommender.py         # AI recommendation engine
+├── requirements.txt       # Python dependencies
+├── dataset/              # Fashion item images (auto-populated if empty)
+├── uploads/              # User uploaded images
+├── templates/
+│   └── index.html        # Frontend interface
+└── README.md            # This file
+```
 
----
+## Installation
 
-## 🧠 Technologies Used
-- Python
-- Machine Learning
-- Deep Learning
-- Computer Vision
-- Generative AI
-- FastAPI / Flask
-- React / Web Interface
+1. **Install Python** (3.8 or higher)
 
----
+2. **Clone or download** the project files
 
-## ⚙️ How It Works
-1. User uploads clothing image or selects preferences
-2. System analyzes clothing features using Computer Vision
-3. AI model predicts suitable combinations
-4. Personalized outfits are recommended to the user
+3. **Install dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
----
+4. **Run the application**:
+   ```bash
+   python app.py
+   ```
 
-## 📊 Future Scope
-- Virtual Try-On using AR
-- Weather-based recommendations
-- E-commerce website integration
+5. **Open in browser**: Navigate to `http://localhost:5000`
 
----
+## Usage
 
-## 👨‍💻 Author
-Developed as part of Hackathon Project Submission
+1. **Upload an Image**: Click the upload area or drag & drop a clothing image
+2. **Find Similar Items**: Click "Find Similar Items" to process the image
+3. **View Results**: See recommended similar fashion items with similarity scores
 
+## Supported Image Formats
+
+- PNG
+- JPG/JPEG
+- GIF
+- BMP
+
+Maximum file size: 16MB
+
+## How It Works
+
+1. **Feature Extraction**: Uses MobileNetV2 (pre-trained on ImageNet) to extract visual features from images
+2. **Similarity Matching**: Compares features using cosine similarity to find the most similar items
+3. **Ranking**: Returns top 6 most similar items with similarity percentages
+
+## Dataset
+
+- The system automatically creates sample fashion items if the `dataset/` folder is empty
+- Add your own fashion images to the `dataset/` folder for better recommendations
+- Supports nested folder structures within the dataset directory
+
+## Technical Details
+
+- **Backend**: Flask web framework
+- **AI Model**: MobileNetV2 for feature extraction
+- **Similarity Algorithm**: Cosine similarity
+- **Frontend**: HTML5, CSS3, JavaScript (no external frameworks)
+- **Image Processing**: OpenCV, PIL, TensorFlow
+
+## API Endpoints
+
+- `GET /` - Main page
+- `POST /upload` - Upload image and get recommendations
+- `GET /uploads/<filename>` - Serve uploaded files
+- `GET /dataset/<path:filename>` - Serve dataset files
+- `GET /api/dataset-info` - Get dataset information
+
+## Customization
+
+- **Change similarity threshold**: Modify the `find_similar_items` method in `recommender.py`
+- **Adjust number of recommendations**: Change the `top_k` parameter
+- **Custom UI**: Modify `templates/index.html`
+- **Add more image formats**: Update `ALLOWED_EXTENSIONS` in `app.py`
+
+## Troubleshooting
+
+1. **TensorFlow Installation Issues**: 
+   - Try installing CPU-only version: `pip install tensorflow-cpu`
+   - Or use conda: `conda install tensorflow`
+
+2. **Memory Issues**:
+   - Reduce dataset size
+   - Use smaller image dimensions
+
+3. **Port Already in Use**:
+   - Change port in `app.py`: `app.run(port=5001)`
+
+## License
+
+This project is for educational purposes. Feel free to modify and distribute.

@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StyleSense – AI Fashion Stylist</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-purple: #8B5CF6;
+            --light-purple: #A78BFA;
+            --soft-purple: #DDD6FE;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-primary: #1F2937;
+            --text-secondary: #6B7280;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .hero-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #f5576c);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            z-index: -2;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            z-index: -1;
+        }
+
+        /* Glass Card Style */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-purple);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            padding: 3rem;
+            margin-top: 2rem;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease 0.2s backwards;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease 0.4s backwards;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--gradient-1);
+            color: white;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary-purple);
+            border: 2px solid var(--primary-purple);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-purple);
+            color: white;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .upload-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .upload-box {
+            padding: 3rem;
+            text-align: center;
+            border: 3px dashed var(--primary-purple);
+            border-radius: 20px;
+            background: rgba(139, 92, 246, 0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-box:hover {
+            border-color: var(--light-purple);
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .upload-box.dragover {
+            background: rgba(139, 92, 246, 0.15);
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-purple);
+        }
+
+        /* Results Section */
+        .results-container {
+            display: none;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .result-card {
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .confidence-meter {
+            width: 100%;
+            height: 10px;
+            background: #e5e7eb;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: var(--gradient-1);
+            transition: width 1s ease;
+        }
+
+        /* Chat Section */
+        .chat-section {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .chat-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            background: white;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+
+        .user-message {
+            background: var(--gradient-1);
+            color: white;
+            margin-left: auto;
+        }
+
+        .ai-message {
+            background: #f3f4f6;
+            color: var(--text-primary);
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 50px;
+            font-size: 1rem;
+        }
+
+        /* Trends Section */
+        .trends-section {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .trends-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .trend-card {
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .trend-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .trend-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Regional Section */
+        .regional-section {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .region-selector {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .region-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--primary-purple);
+            background: white;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .region-btn.active {
+            background: var(--primary-purple);
+            color: white;
+        }
+
+        /* Wardrobe Section */
+        .wardrobe-section {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .wardrobe-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .wardrobe-item {
+            aspect-ratio: 1;
+            background: #f3f4f6;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 2rem;
+        }
+
+        .wardrobe-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .wardrobe-item.selected {
+            border: 3px solid var(--primary-purple);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--text-primary);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .team-name {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid var(--primary-purple);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .upload-container {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+
+        /* Section Headers */
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="hero-bg"></div>
+    <div class="overlay"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">StyleSense</div>
+            <ul class="nav-links">
+                <li><a href="#upload">Upload</a></li>
+                <li><a href="#chat">AI Stylist</a></li>
+                <li><a href="#trends">Trends</a></li>
+                <li><a href="#wardrobe">Wardrobe</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content glass-card">
+            <h1>Your Personal AI Fashion Stylist</h1>
+            <p>Upload clothes and get AI outfit suggestions based on occasion, trends, and body type</p>
+            <div class="hero-buttons">
+                <a href="#upload" class="btn btn-primary">Try Now</a>
+                <a href="#how-it-works" class="btn btn-secondary">How It Works</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Upload & Analyze Section -->
+    <section class="upload-section" id="upload">
+        <div class="section-header">
+            <h2 class="section-title">Upload & Analyze</h2>
+            <p class="section-subtitle">Get personalized outfit recommendations powered by AI</p>
+        </div>
+
+        <div class="upload-container">
+            <div class="upload-box" id="uploadBox">
+                <div class="upload-icon">📸</div>
+                <h3>Drag & Drop Your Image</h3>
+                <p>or click to browse</p>
+                <input type="file" id="fileInput" accept="image/*" style="display: none;">
+            </div>
+
+            <div class="glass-card">
+                <div class="form-group">
+                    <label for="occasion">Occasion</label>
+                    <select id="occasion" class="form-control">
+                        <option value="">Select Occasion</option>
+                        <option value="casual">Casual</option>
+                        <option value="college">College</option>
+                        <option value="party">Party</option>
+                        <option value="formal">Formal</option>
+                        <option value="wedding">Wedding</option>
+                        <option value="travel">Travel</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="bodyType">Body Type</label>
+                    <select id="bodyType" class="form-control">
+                        <option value="">Select Body Type</option>
+                        <option value="slim">Slim</option>
+                        <option value="average">Average</option>
+                        <option value="athletic">Athletic</option>
+                        <option value="plus">Plus Size</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-primary" onclick="generateOutfit()" style="width: 100%;">
+                    Generate Outfit
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading Animation -->
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            <p>Analyzing fashion with AI...</p>
+        </div>
+
+        <!-- Results Container -->
+        <div class="results-container glass-card" id="results">
+            <h3 style="text-align: center; margin-bottom: 2rem;">AI Analysis Results</h3>
+            <div class="results-grid" id="resultsGrid">
+                <!-- Results will be populated here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Stylist Chat Section -->
+    <section class="chat-section" id="chat">
+        <div class="section-header">
+            <h2 class="section-title">AI Stylist Chat</h2>
+            <p class="section-subtitle">Get personalized fashion advice from our AI stylist</p>
+        </div>
+
+        <div class="chat-container glass-card">
+            <div class="chat-messages" id="chatMessages">
+                <div class="message ai-message">
+                    👋 Hi! I'm your personal AI stylist. Ask me anything about fashion, outfits, or styling tips!
+                </div>
+            </div>
+            <div class="chat-input-container">
+                <input type="text" class="chat-input" id="chatInput" placeholder="What should I wear today?">
+                <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trends Section -->
+    <section class="trends-section" id="trends">
+        <div class="section-header">
+            <h2 class="section-title">Trend Recommendations</h2>
+            <p class="section-subtitle">Discover the latest fashion trends</p>
+        </div>
+
+        <div class="trends-grid">
+            <div class="trend-card glass-card">
+                <div class="trend-icon">🏙️</div>
+                <h3>Streetwear</h3>
+                <p>Oversized hoodies, cargo pants, and statement sneakers define this urban-inspired trend. Perfect for casual outings with an edgy vibe.</p>
+                <div style="margin-top: 1rem;">
+                    <strong>Outfit:</strong> Graphic tee + cargo pants + chunky sneakers + beanie
+                </div>
+            </div>
+
+            <div class="trend-card glass-card">
+                <div class="trend-icon">⚪</div>
+                <h3>Minimalist</h3>
+                <p>Clean lines, neutral colors, and simple silhouettes create timeless elegance. Less is more with this sophisticated approach.</p>
+                <div style="margin-top: 1rem;">
+                    <strong>Outfit:</strong> White shirt + black trousers + minimal jewelry + loafers
+                </div>
+            </div>
+
+            <div class="trend-card glass-card">
+                <div class="trend-icon">🌸</div>
+                <h3>Traditional Fusion</h3>
+                <p>Blend cultural heritage with modern fashion. Traditional patterns meet contemporary cuts for unique style statements.</p>
+                <div style="margin-top: 1rem;">
+                    <strong>Outfit:</strong> Kurta jacket + jeans + mojris + statement belt
+                </div>
+            </div>
+
+            <div class="trend-card glass-card">
+                <div class="trend-icon">✨</div>
+                <h3>Formal Elegance</h3>
+                <p>Classic tailoring meets modern sophistication. Perfect for professional settings and special occasions.</p>
+                <div style="margin-top: 1rem;">
+                    <strong>Outfit:</strong> Blazer + dress pants + oxford shoes + watch
+                </div>
+            </div>
+
+            <div class="trend-card glass-card">
+                <div class="trend-icon">☀️</div>
+                <h3>Summer Casual</h3>
+                <p>Light fabrics, bright colors, and relaxed fits for warm weather comfort and style.</p>
+                <div style="margin-top: 1rem;">
+                    <strong>Outfit:</strong> Linen shirt + shorts + sandals + sunglasses
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Regional Adaptation Section -->
+    <section class="regional-section" id="regional">
+        <div class="section-header">
+            <h2 class="section-title">Regional Adaptation</h2>
+            <p class="section-subtitle">Fashion recommendations tailored to your region</p>
+        </div>
+
+        <div class="region-selector">
+            <button class="region-btn active" onclick="selectRegion('india')">India</button>
+            <button class="region-btn" onclick="selectRegion('us')">US</button>
+            <button class="region-btn" onclick="selectRegion('europe')">Europe</button>
+            <button class="region-btn" onclick="selectRegion('middle-east')">Middle East</button>
+        </div>
+
+        <div class="glass-card" style="padding: 2rem; text-align: center;">
+            <div id="regionalContent">
+                <h3>🇮🇳 Indian Style</h3>
+                <p>Embrace vibrant colors, traditional textiles, and fusion wear. Mix kurtas with jeans, accessorize with jhumkas, and choose fabrics that breathe in our climate.</p>
+                <div style="margin-top: 1rem;">
+                    <strong>Recommended:</strong> Indo-western fusion, cotton fabrics, statement jewelry
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Virtual Wardrobe Section -->
+    <section class="wardrobe-section" id="wardrobe">
+        <div class="section-header">
+            <h2 class="section-title">Virtual Wardrobe</h2>
+            <p class="section-subtitle">Mix and match your clothing items</p>
+        </div>
+
+        <div class="glass-card" style="padding: 2rem;">
+            <div class="wardrobe-grid" id="wardrobeGrid">
+                <!-- Wardrobe items will be populated here -->
+            </div>
+            <div style="text-align: center; margin-top: 2rem;">
+                <button class="btn btn-primary" onclick="addToWardrobe()">Add Item to Wardrobe</button>
+                <button class="btn btn-secondary" onclick="createOutfit()">Create Outfit</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="team-name">StyleSense</div>
+            <p class="tagline">Fashion meets AI</p>
+            <p style="margin-top: 1rem; opacity: 0.8;">Hackathon Project • Built with ❤️ by Team StyleSense</p>
+            <p style="margin-top: 0.5rem; opacity: 0.6;">© 2024 StyleSense. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize wardrobe items
+        let wardrobeItems = [
+            { id: 1, type: 'shirt', icon: '👔', selected: false },
+            { id: 2, type: 'pants', icon: '👖', selected: false },
+            { id: 3, type: 'dress', icon: '👗', selected: false },
+            { id: 4, type: 'jacket', icon: '🧥', selected: false },
+            { id: 5, type: 'shoes', icon: '👟', selected: false },
+            { id: 6, type: 'accessories', icon: '👜', selected: false }
+        ];
+
+        // Regional content data
+        const regionalData = {
+            india: {
+                title: '🇮🇳 Indian Style',
+                content: 'Embrace vibrant colors, traditional textiles, and fusion wear. Mix kurtas with jeans, accessorize with jhumkas, and choose fabrics that breathe in our climate.',
+                recommended: 'Indo-western fusion, cotton fabrics, statement jewelry'
+            },
+            us: {
+                title: '🇺🇸 American Style',
+                content: 'Casual comfort meets practical fashion. Denim, sneakers, and versatile layers define the American aesthetic with emphasis on individuality.',
+                recommended: 'Denim jackets, sneakers, versatile basics, streetwear elements'
+            },
+            europe: {
+                title: '🇪🇺 European Style',
+                content: 'Sophisticated minimalism with attention to quality. Neutral palettes, tailored fits, and timeless pieces that transcend seasons.',
+                recommended: 'Tailored blazers, quality basics, neutral colors, leather accessories'
+            },
+            middleEast: {
+                title: '🇸🇦 Middle Eastern Style',
+                content: 'Modest elegance with luxurious fabrics. Flowing silhouettes, intricate embroidery, and modest cuts that celebrate cultural heritage.',
+                recommended: 'Abayas, kaftans, modest wear, luxury fabrics, gold accessories'
+            }
+        };
+
+        // AI Chat responses
+        const aiResponses = [
+            "Based on today's weather, I'd recommend a light cotton shirt with comfortable jeans. Don't forget sunglasses!",
+            "For a professional look, try a crisp white shirt with tailored trousers and polished shoes.",
+            "Feeling bold? How about a colorful jacket with neutral basics to make it pop?",
+            "Casual Friday calls for smart casual - polo shirt, chinos, and loafers.",
+            "Date night? A stylish dark shirt with well-fitted jeans and dress shoes will impress!",
+            "For outdoor activities, choose breathable fabrics and comfortable footwear.",
+            "Meeting new people? Wear something that makes you feel confident and authentic!",
+            "Brunch with friends? A casual dress or smart casual outfit would be perfect.",
+            "Important presentation? Power dressing with a blazer will boost your confidence!",
+            "Weekend getaway? Comfortable layers and versatile pieces are your best friends."
+        ];
+
+        // Initialize wardrobe
+        function initializeWardrobe() {
+            const grid = document.getElementById('wardrobeGrid');
+            grid.innerHTML = '';
+            
+            wardrobeItems.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = `wardrobe-item ${item.selected ? 'selected' : ''}`;
+                itemDiv.innerHTML = item.icon;
+                itemDiv.onclick = () => toggleWardrobeItem(item.id);
+                grid.appendChild(itemDiv);
+            });
+        }
+
+        // Toggle wardrobe item selection
+        function toggleWardrobeItem(id) {
+            const item = wardrobeItems.find(i => i.id === id);
+            if (item) {
+                item.selected = !item.selected;
+                initializeWardrobe();
+            }
+        }
+
+        // Add item to wardrobe
+        function addToWardrobe() {
+            const newItem = {
+                id: wardrobeItems.length + 1,
+                type: 'custom',
+                icon: '👕',
+                selected: false
+            };
+            wardrobeItems.push(newItem);
+            initializeWardrobe();
+        }
+
+        // Create outfit from selected items
+        function createOutfit() {
+            const selected = wardrobeItems.filter(item => item.selected);
+            if (selected.length < 2) {
+                alert('Please select at least 2 items to create an outfit!');
+                return;
+            }
+            
+            const outfitIcons = selected.map(item => item.icon).join(' ');
+            alert(`Your outfit: ${outfitIcons}\n\nGreat combination! This outfit balances style and comfort perfectly.`);
+        }
+
+        // Select region
+        function selectRegion(region) {
+            // Update button states
+            document.querySelectorAll('.region-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update content
+            const data = regionalData[region];
+            document.getElementById('regionalContent').innerHTML = `
+                <h3>${data.title}</h3>
+                <p>${data.content}</p>
+                <div style="margin-top: 1rem;">
+                    <strong>Recommended:</strong> ${data.recommended}
+                </div>
+            `;
+        }
+
+        // Upload functionality
+        const uploadBox = document.getElementById('uploadBox');
+        const fileInput = document.getElementById('fileInput');
+
+        uploadBox.addEventListener('click', () => fileInput.click());
+
+        uploadBox.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadBox.classList.add('dragover');
+        });
+
+        uploadBox.addEventListener('dragleave', () => {
+            uploadBox.classList.remove('dragover');
+        });
+
+        uploadBox.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadBox.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileUpload(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileUpload(e.target.files[0]);
+            }
+        });
+
+        function handleFileUpload(file) {
+            uploadBox.innerHTML = `
+                <div class="upload-icon">✅</div>
+                <h3>File Uploaded!</h3>
+                <p>${file.name}</p>
+            `;
+        }
+
+        // Generate outfit with AI simulation
+        function generateOutfit() {
+            const occasion = document.getElementById('occasion').value;
+            const bodyType = document.getElementById('bodyType').value;
+
+            if (!occasion || !bodyType) {
+                alert('Please select both occasion and body type!');
+                return;
+            }
+
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+
+            // Simulate AI processing
+            setTimeout(() => {
+                const results = generateAIResults(occasion, bodyType);
+                displayResults(results);
+                
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('results').style.display = 'block';
+            }, 2000);
+        }
+
+        function generateAIResults(occasion, bodyType) {
+            const clothingTypes = {
+                casual: ['T-shirt', 'Jeans', 'Sneakers', 'Casual Jacket'],
+                college: ['Polo Shirt', 'Chinos', 'Loafers', 'Backpack'],
+                party: ['Dress Shirt', 'Dark Jeans', 'Dress Shoes', 'Blazer'],
+                formal: ['Dress Shirt', 'Suit Pants', 'Oxford Shoes', 'Tie'],
+                wedding: ['Sherwani/Kurta', 'Formal Trousers', 'Dress Shoes', 'Accessories'],
+                travel: ['Comfortable Shirt', 'Travel Pants', 'Comfortable Shoes', 'Light Jacket']
+            };
+
+            const bodyTypeAdvice = {
+                slim: 'Fitted clothes that accentuate your lean silhouette',
+                average: 'Well-balanced proportions with regular fits',
+                athletic: 'Structured pieces that complement your build',
+                plus: 'Comfortable fits with proper tailoring'
+            };
+
+            const items = clothingTypes[occasion] || clothingTypes.casual;
+            const advice = bodyTypeAdvice[bodyType] || bodyTypeAdvice.average;
+
+            return {
+                detectedType: occasion.charAt(0).toUpperCase() + occasion.slice(1) + ' Wear',
+                items: items,
+                advice: `For your ${bodyType} body type: ${advice}. This outfit balances comfort and style perfectly.`,
+                confidence: Math.floor(Math.random() * 20) + 80, // 80-99%
+                sustainability: 'Choose sustainable fabrics like organic cotton or recycled materials to reduce environmental impact.'
+            };
+        }
+
+        function displayResults(results) {
+            const resultsGrid = document.getElementById('resultsGrid');
+            resultsGrid.innerHTML = `
+                <div class="result-card glass-card">
+                    <h3>🎯 Detected Type</h3>
+                    <p><strong>${results.detectedType}</strong></p>
+                </div>
+                
+                <div class="result-card glass-card">
+                    <h3>👔 Matching Items</h3>
+                    <ul style="text-align: left; margin-top: 1rem;">
+                        ${results.items.map(item => `<li>${item}</li>`).join('')}
+                    </ul>
+                </div>
+                
+                <div class="result-card glass-card">
+                    <h3>💡 Styling Advice</h3>
+                    <p>${results.advice}</p>
+                </div>
+                
+                <div class="result-card glass-card">
+                    <h3>📊 AI Confidence</h3>
+                    <div class="confidence-meter">
+                        <div class="confidence-fill" style="width: ${results.confidence}%"></div>
+                    </div>
+                    <p><strong>${results.confidence}%</strong> match</p>
+                </div>
+                
+                <div class="result-card glass-card">
+                    <h3>🌱 Sustainability Tip</h3>
+                    <p>${results.sustainability}</p>
+                </div>
+            `;
+        }
+
+        // Chat functionality
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            const chatMessages = document.getElementById('chatMessages');
+            
+            // Add user message
+            chatMessages.innerHTML += `
+                <div class="message user-message">${message}</div>
+            `;
+            
+            input.value = '';
+            
+            // Simulate AI response
+            setTimeout(() => {
+                const response = aiResponses[Math.floor(Math.random() * aiResponses.length)];
+                chatMessages.innerHTML += `
+                    <div class="message ai-message">${response}</div>
+                `;
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 1000);
+        }
+
+        // Enter key to send message
+        document.getElementById('chatInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeWardrobe();
+        });
+    </script>
+</body>
+</html>
